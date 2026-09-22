@@ -1,0 +1,94 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
+#    Updated: 2026/09/22 19:02:35 by cgajean          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+
+# ---------------------------------------------------------------------------- #
+# files                                                                        #
+# ---------------------------------------------------------------------------- #
+
+PREDICT		:= predict
+TRAIN		:= train
+PRECIS		:= precision
+
+
+# ---------------------------------------------------------------------------- #
+# build                                                                        #
+# ---------------------------------------------------------------------------- #
+
+## Build the whole project
+all:
+	+$(MAKE) -C $(PREDICT) all
+	+$(MAKE) -C $(TRAIN) all
+	+$(MAKE) -C $(PRECIS) all
+
+## Build the whole project in a Docker environment
+docker: 
+	+$(MAKE) fclean
+	docker build -t linear:1.0 .
+
+## Call 'fclean' then 'all' targets
+re:
+	+$(MAKE) fclean
+	+$(MAKE) all
+
+
+# ---------------------------------------------------------------------------- #
+# clean                                                                        #
+# ---------------------------------------------------------------------------- #
+
+## Clean the .object folder
+clean:
+	+$(MAKE) -C $(PREDICT) clean
+	+$(MAKE) -C $(TRAIN) clean
+	+$(MAKE) -C $(PRECIS) clean
+
+## Call the 'clean' target and the delete executable file
+fclean:
+	+$(MAKE) -C $(PREDICT) fclean
+	+$(MAKE) -C $(TRAIN) fclean
+	+$(MAKE) -C $(PRECIS) fclean
+
+
+
+# ---------------------------------------------------------------------------- #
+# test                                                                         #
+# ---------------------------------------------------------------------------- #
+
+docker_run:
+	docker run -it localhost/linear:1.0
+
+
+# ---------------------------------------------------------------------------- #
+# misc                                                                         #
+# ---------------------------------------------------------------------------- #
+
+## Format files
+format:
+	@find . -name "*.cpp" -o -name "*.hpp" | xargs clang-format -i
+
+# Provided by https://gitlab.com/depressiveRobot/make-help/blob/master/help.mk
+## Show this help
+help:
+	@printf "\nAvailable targets:\n"
+	@awk '/^[a-zA-Z\-_0-9]+:/ { \
+		helpMessage = match(lastLine, /^## (.*)/); \
+		if (helpMessage) { \
+			helpCommand = substr($$1, 0, index($$1, ":")-1); \
+			helpMessage = substr(lastLine, RSTART + 3, RLENGTH); \
+			printf "  %-20s %s\n", helpCommand, helpMessage; \
+		} \
+	} \
+	{ lastLine = $$0 }' $(MAKEFILE_LIST)
+	@echo
+
+
+.PHONY: all re docker test docker_run clean fclean format help
