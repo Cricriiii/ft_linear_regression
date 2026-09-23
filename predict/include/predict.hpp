@@ -13,5 +13,4 @@
 #pragma once
 
 void function() {
-    
 }

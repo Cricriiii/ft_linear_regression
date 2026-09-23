@@ -3,22 +3,22 @@
 #                                                         :::      ::::::::    #
 #    Dockerfile                                         :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
+#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/23 16:22:29 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/23 16:24:57 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/23 14:40:01 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM fedora:44
 
 RUN dnf install -y \
+        g++ \
+        clang-format \
         boost-devel \
-        cmake \
-        gcc-c++ \
+        make \
         gdb \
         git \
-        make \
         sudo \
         zsh \
         curl \
