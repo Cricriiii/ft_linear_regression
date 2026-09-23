@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
+#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/23 15:31:01 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/23 22:19:05 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,9 +28,9 @@ NUMCPP		:= numcpp
 ## Build whole project
 all:
 	+$(MAKE) numcpp
-	+$(MAKE) -C $(PREDICT) all
-	+$(MAKE) -C $(TRAIN) all
-	+$(MAKE) -C $(PRECIS) all
+	+$(MAKE) -C $(PREDICT) all -j$(nproc)
+	+$(MAKE) -C $(TRAIN) all -j$(nproc)
+	+$(MAKE) -C $(PRECIS) all -j$(nproc)
 
 ## Build whole project in a Docker environment
 docker:
