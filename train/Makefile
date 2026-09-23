@@ -6,7 +6,7 @@
 #    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/22 18:37:42 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/23 15:29:22 by cgajean          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG)
 PROGRAM			:= $(notdir $(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
 
 ROOT_INC		:= ../include
+NUMCPP_INC		:= ../numcpp/include
 
 SRC_DIR			:= source
 OBJ_DIR			:= .object
@@ -45,11 +46,11 @@ FILES_O			:= $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(FILES_CPP))
 all: $(PROGRAM)
 
 $(PROGRAM): $(FILES_O)
-	$(CXX) $(CXX_FLAGS) -I $(ROOT_INC) -I $(INC_DIR) $^ -o $(PROGRAM)
+	$(CXX) $(CXX_FLAGS) -I $(ROOT_INC) -I $(NUMCPP_INC) -I $(INC_DIR) $^ -o $(PROGRAM)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) -I $(ROOT_INC) -I $(INC_DIR) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) -I $(ROOT_INC) -I $(NUMCPP_INC) -I $(INC_DIR) -c $< -o $@
 
 ## Call 'fclean' then 'all' targets
 re:

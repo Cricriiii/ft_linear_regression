@@ -6,7 +6,7 @@
 #    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/22 19:02:35 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/23 15:31:01 by cgajean          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,20 +18,22 @@
 PREDICT		:= predict
 TRAIN		:= train
 PRECIS		:= precision
+NUMCPP		:= numcpp
 
 
 # ---------------------------------------------------------------------------- #
 # build                                                                        #
 # ---------------------------------------------------------------------------- #
 
-## Build the whole project
+## Build whole project
 all:
+	+$(MAKE) numcpp
 	+$(MAKE) -C $(PREDICT) all
 	+$(MAKE) -C $(TRAIN) all
 	+$(MAKE) -C $(PRECIS) all
 
-## Build the whole project in a Docker environment
-docker: 
+## Build whole project in a Docker environment
+docker:
 	+$(MAKE) fclean
 	docker build -t linear:1.0 .
 
@@ -40,23 +42,40 @@ re:
 	+$(MAKE) fclean
 	+$(MAKE) all
 
+## Call 'reset' then 'all' targets
+rere:
+	+$(MAKE) reset
+	+$(MAKE) all	
+
+## Import numcpp
+numcpp:
+ifeq ($(wildcard $(NUMCPP)),)
+	git clone https://github.com/dpilger26/NumCpp.git $(NUMCPP);
+else
+	@echo "$(NUMCPP) is already installed"
+endif
+
 
 # ---------------------------------------------------------------------------- #
 # clean                                                                        #
 # ---------------------------------------------------------------------------- #
 
-## Clean the .object folder
+## Clean .object folders
 clean:
 	+$(MAKE) -C $(PREDICT) clean
 	+$(MAKE) -C $(TRAIN) clean
 	+$(MAKE) -C $(PRECIS) clean
 
-## Call the 'clean' target and the delete executable file
+## Call 'clean' target and delete executable files
 fclean:
 	+$(MAKE) -C $(PREDICT) fclean
 	+$(MAKE) -C $(TRAIN) fclean
 	+$(MAKE) -C $(PRECIS) fclean
 
+## Call 'fclean' target and wipe imported librairies
+reset:
+	+$(MAKE) fclean
+	rm -rf $(NUMCPP)
 
 
 # ---------------------------------------------------------------------------- #
@@ -91,4 +110,4 @@ help:
 	@echo
 
 
-.PHONY: all re docker test docker_run clean fclean format help
+.PHONY: all numcpp re rere docker test docker_run clean fclean reset format help
