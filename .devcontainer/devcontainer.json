@@ -1,0 +1,20 @@
+{
+  "name": "ft_linear_regression",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspaces/ft_linear_regression",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools-extension-pack",
+        "kube.42header",
+        "albert.tabout",
+        "tomoki1207.pdf"
+      ]
+    }
+  },
+  "postCreateCommand": "make"
+}
