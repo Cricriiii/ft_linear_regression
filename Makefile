@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
+#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/23 22:19:05 by fox              ###   ########.fr        #
+#    Updated: 2026/09/24 14:02:54 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,8 @@
 PREDICT		:= predict
 TRAIN		:= train
 PRECIS		:= precision
-NUMCPP		:= numcpp
+NUMCPP		:= NumCpp
+LIBCPP		:= LibCpp
 
 
 # ---------------------------------------------------------------------------- #
@@ -27,10 +28,10 @@ NUMCPP		:= numcpp
 
 ## Build whole project
 all:
-	+$(MAKE) numcpp
-	+$(MAKE) -C $(PREDICT) all -j$(nproc)
-	+$(MAKE) -C $(TRAIN) all -j$(nproc)
-	+$(MAKE) -C $(PRECIS) all -j$(nproc)
+	+$(MAKE) $(NUMCPP)
+	+$(MAKE) -C $(PREDICT) -j $(nproc) all
+	+$(MAKE) -C $(TRAIN) -j $(nproc) all
+	+$(MAKE) -C $(PRECIS) -j $(nproc) all
 
 ## Build whole project in a Docker environment
 docker:
@@ -48,7 +49,7 @@ rere:
 	+$(MAKE) all	
 
 ## Import numcpp
-numcpp:
+$(NUMCPP):
 ifeq ($(wildcard $(NUMCPP)),)
 	git clone https://github.com/dpilger26/NumCpp.git $(NUMCPP);
 else
@@ -110,4 +111,4 @@ help:
 	@echo
 
 
-.PHONY: all numcpp re rere docker test docker_run clean fclean reset format help
+.PHONY: all re rere docker test docker_run clean fclean reset format help

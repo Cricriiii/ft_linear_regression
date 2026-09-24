@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
+#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/23 15:29:33 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/24 13:50:36 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,8 +27,10 @@ CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG)
 
 PROGRAM			:= $(notdir $(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
 
-ROOT_INC		:= ../include
-NUMCPP_INC		:= ../numcpp/include
+ROOT_INC		:= ../common
+NUMCPP_INC		:= ../NumCpp/include
+LIBCPP_INC		:= ../LibCpp/include
+ALL_LIBS_INC	:= $(ROOT_INC) -I $(NUMCPP_INC) -I $(LIBCPP_INC)
 
 SRC_DIR			:= source
 OBJ_DIR			:= .object
@@ -46,11 +48,11 @@ FILES_O			:= $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(FILES_CPP))
 all: $(PROGRAM)
 
 $(PROGRAM): $(FILES_O)
-	$(CXX) $(CXX_FLAGS) -I $(ROOT_INC) -I $(NUMCPP_INC) -I $(INC_DIR) $^ -o $(PROGRAM)
+	$(CXX) $(CXX_FLAGS) -I $(ALL_LIBS_INC) -I $(INC_DIR) $^ -o $(PROGRAM)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) -I $(ROOT_INC) -I $(NUMCPP_INC) -I $(INC_DIR) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) -I $(ALL_LIBS_INC) -I $(INC_DIR) -c $< -o $@
 
 ## Call 'fclean' then 'all' targets
 re:

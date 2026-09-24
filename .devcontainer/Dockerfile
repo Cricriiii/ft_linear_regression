@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/23 16:22:29 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/23 14:40:01 by root             ###   ########.fr        #
+#    Updated: 2026/09/24 10:16:49 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ RUN dnf install -y \
         sudo \
         zsh \
         curl \
+        valgrind \
     && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
     && dnf clean all \
     && rm -rf /var/cache/dnf
