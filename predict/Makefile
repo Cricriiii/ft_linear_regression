@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
+#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/24 13:50:43 by root             ###   ########.fr        #
+#    Updated: 2026/09/24 23:09:52 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,8 +29,7 @@ PROGRAM			:= $(notdir $(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
 
 ROOT_INC		:= ../common
 NUMCPP_INC		:= ../NumCpp/include
-LIBCPP_INC		:= ../LibCpp/include
-ALL_LIBS_INC	:= $(ROOT_INC) -I $(NUMCPP_INC) -I $(LIBCPP_INC)
+ALL_LIBS_INC	:= $(ROOT_INC) -I $(NUMCPP_INC)
 
 SRC_DIR			:= source
 OBJ_DIR			:= .object
