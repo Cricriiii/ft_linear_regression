@@ -32,6 +32,7 @@ executable/
 libasm_tester
 test.cpp
 NumCpp
+matplotlib-cpp
 
 # ============================================================
 # Data

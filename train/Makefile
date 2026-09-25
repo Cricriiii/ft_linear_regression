@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/25 14:39:49 by root             ###   ########.fr        #
+#    Updated: 2026/09/25 16:24:36 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,14 @@ CXX				:= g++
 CXX_STD			:= -std=c++23
 CXX_EFLAGS		:= -Werror -Wall -Wextra 
 CXX_DEBUG		:= -g3
-CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG)
+
+PYTHON_CFLAGS	:= $(shell python3-config --includes)
+PYTHON_LDFLAGS	:= $(shell python3-config --embed --ldflags)
+NUMPY_CFLAGS	:= -I $(shell python3 -c 'import numpy; print(numpy.get_include())')
+
+CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG) \
+					$(PYTHON_CFLAGS) $(NUMPY_CFLAGS) \
+					-Wno-deprecated-declarations
 
 
 # ---------------------------------------------------------------------------- #
@@ -28,6 +35,7 @@ CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG)
 PROGRAM			:= $(notdir $(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
 
 NUMCPP_INC		:= ../NumCpp/include
+MATPLOT_INC		:= ../matplotlib-cpp
 
 SRC_DIR			:= source
 OBJ_DIR			:= .object
@@ -45,11 +53,11 @@ FILES_O			:= $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(FILES_CPP))
 all: $(PROGRAM)
 
 $(PROGRAM): $(FILES_O) $(COMMON_O)
-	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) $^ -o $(PROGRAM)
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(MATPLOT_INC) -I $(INC_DIR) $^ -o $(PROGRAM) $(PYTHON_LDFLAGS)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(MATPLOT_INC) -I $(INC_DIR) -c $< -o $@
 
 
 ## Call 'fclean' then 'all' targets

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Dockerfile                                         :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
+#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:45:44 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/23 15:31:26 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/25 16:17:13 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,15 @@ COPY Makefile Makefile
 #     rm -rf /var/cache/dnf
 
 # # Install dependencies
-RUN dnf update && dnf install -y g++ make cmake boost-devel git && \
+RUN dnf update && dnf install -y \
+    g++ \
+    make \
+    cmake \
+    boost-devel \
+    git \
+    python3-devel \
+    python3-numpy \
+    python3-matplotlib && \
     git clone https://github.com/dpilger26/NumCpp.git numcpp && \
     cd $_ && mkdir build && cd $_ && cmake .. && \
     cmake --build . --target install && \

@@ -6,14 +6,15 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/22 16:59:08 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/25 13:07:53 by root             ###   ########.fr       */
+/*   Updated: 2026/09/25 16:11:23 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <chrono>
-
+#include "matplotlibcpp.h"
 #include "linear_regression.hpp"
 #include "numcpp_tools.hpp"
+
+#include <chrono>
 
 constexpr std::size_t n_iterations = 1000;
 

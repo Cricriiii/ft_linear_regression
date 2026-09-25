@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
+#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/24 23:09:43 by fox              ###   ########.fr        #
+#    Updated: 2026/09/25 16:25:11 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ PREDICT		:= predict
 TRAIN		:= train
 PRECIS		:= precision
 NUMCPP		:= NumCpp
+MATPLOT		:= matplotlib-cpp
 
 
 # ---------------------------------------------------------------------------- #
@@ -28,6 +29,7 @@ NUMCPP		:= NumCpp
 ## Build whole project
 all:
 	+$(MAKE) $(NUMCPP)
+	+$(MAKE) $(MATPLOT)
 	+$(MAKE) -C $(PREDICT) -j $(nproc) all
 	+$(MAKE) -C $(TRAIN) -j $(nproc) all
 	+$(MAKE) -C $(PRECIS) -j $(nproc) all
@@ -47,12 +49,20 @@ rere:
 	+$(MAKE) reset
 	+$(MAKE) all	
 
-## Import numcpp
+## Import NumCpp
 $(NUMCPP):
 ifeq ($(wildcard $(NUMCPP)),)
 	git clone https://github.com/dpilger26/NumCpp.git $(NUMCPP);
 else
 	@echo "$(NUMCPP) is already installed"
+endif
+
+## Import matplotlib-cpp
+$(MATPLOT):
+ifeq ($(wildcard $(MATPLOT)),)
+	git clone https://github.com/lava/matplotlib-cpp.git $(MATPLOT)
+else
+	@echo "$(MATPLOT) is already installed"
 endif
 
 
@@ -76,6 +86,7 @@ fclean:
 reset:
 	+$(MAKE) fclean
 	rm -rf $(NUMCPP)
+	rm -rf $(MATPLOT)
 
 
 # ---------------------------------------------------------------------------- #

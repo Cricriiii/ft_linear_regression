@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/23 16:22:29 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/24 10:16:49 by root             ###   ########.fr        #
+#    Updated: 2026/09/25 16:16:23 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,9 @@ RUN dnf install -y \
         zsh \
         curl \
         valgrind \
+        python3-devel \
+        python3-numpy \
+        python3-matplotlib
     && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
     && dnf clean all \
     && rm -rf /var/cache/dnf
