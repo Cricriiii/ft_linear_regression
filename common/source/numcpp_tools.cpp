@@ -1,41 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   io_files.hpp                                       :+:      :+:    :+:   */
+/*   numcpp_tools.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fox <fox@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/24 15:35:49 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/25 00:07:17 by fox              ###   ########.fr       */
+/*   Created: 2026/09/25 10:04:25 by root              #+#    #+#             */
+/*   Updated: 2026/09/25 13:05:12 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include "numcpp_tools.hpp"
 
 #include <filesystem>
 #include <fstream>
 #include <optional>
 
-#include "NumCpp.hpp"
-
-namespace C_IO {
-
-/**
- * Return a file descriptor after closing it and clearing errno.
- */
-inline int unopened_fd(int fd) {
-    /* Close errno anyway, which sets errno to EBADF */
-    close(fd);
-    /* Reset errno */
-    *__errno_location() = 0;
-    return fd;
-}
-}  // namespace C_IO
-
+namespace {
 std::optional<std::vector<double>> parseNumericString(const std::string& line,
                                                       char sep) {
     std::istringstream stream{line};
@@ -61,7 +42,21 @@ std::optional<std::vector<double>> parseNumericString(const std::string& line,
     return values;
 }
 
-namespace Cpp_IO {
+std::ofstream openOfstream(std::string&& filepath,
+                           std::ios_base::openmode mode = std::ios::binary |
+                                                          std::ofstream::app) {
+    /* Test filepath */
+    if (filepath.empty()) {
+        throw std::runtime_error{" path to file is required\n"};
+    }
+
+    /* Open file */
+    std::ofstream file{filepath.c_str(), mode};
+    if (!file.is_open()) {
+        throw std::runtime_error{std::move(filepath + " couldn't be opened\n")};
+    }
+    return file;
+}
 
 /**
  * Open file istream and throw if it fails.
@@ -87,28 +82,14 @@ std::ifstream openIfstream(const char* filepath) {
     }
     return file;
 }
+}  // namespace
 
-std::ofstream openOfstream(std::string&& filepath,
-                           std::ios_base::openmode mode = std::ios::binary |
-                                                          std::ofstream::app) {
-    /* Test filepath */
-    if (filepath.empty()) {
-        throw std::runtime_error{" path to file is required\n"};
-    }
+nc::NdArray<double> nc_tools::genFromTxt(const char* filepath) {
+    nc::NdArray<double> matrix{};
+    std::optional<std::vector<double>> values{};
 
-    auto path{std::filesystem::path(filepath)};
     /* Open file */
-    std::ofstream file{filepath.c_str(), mode};
-    if (!file.is_open()) {
-        throw std::runtime_error{std::move(filepath + " couldn't be opened\n")};
-    }
-    return file;
-}
-
-template <typename T>
-nc::NdArray<T> readCSV(std::ifstream& file) {
-    nc::NdArray<T> matrix{};
-    std::optional<std::vector<T>> values{};
+    std::ifstream file{openIfstream(filepath)};
 
     /* Skip headers */
     for (std::string line{}; std::getline(file, line);) {
@@ -120,26 +101,40 @@ nc::NdArray<T> readCSV(std::ifstream& file) {
 
     /* Assess if numeric data was found */
     if (!values.has_value()) {
-        throw std::runtime_error{"wrong data format\n"};
+        throw std::runtime_error{"file doesn't contain any data\n"};
     }
 
     try {
         /* Register the first line of the matrix */
-        auto new_row = nc::fromiter<T>(values->begin(), values->end());
+        auto new_row = nc::fromiter<double>(values->begin(), values->end());
         matrix = nc::append(matrix, std::move(new_row), nc::Axis::ROW);
 
         for (std::string line{}; std::getline(file, line);) {
             /* Register the rest of the file */
             values = parseNumericString(line, ',');
             if (values.has_value()) {
-                auto new_row = nc::fromiter<T>(values->begin(), values->end());
+                auto new_row =
+                    nc::fromiter<double>(values->begin(), values->end());
                 matrix = nc::append(matrix, std::move(new_row), nc::Axis::ROW);
             }
         }
     } catch (std::invalid_argument& e) {
-        throw std::runtime_error{"wrong data format\n"};
+        throw std::runtime_error{"data is not properly formatted\n"};
     }
 
     return matrix;
 }
-}  // namespace Cpp_IO
+
+void nc_tools::dumpToTxt(std::string_view str, const char* filepath) {
+    /* Open file */
+    std::ofstream file{openOfstream(filepath)};
+
+    file << str;
+}
+
+// void nc_tools::dumpToTxt(const std::string& str, const char* filepath) {
+//     /* Open file */
+//     std::ofstream file{openOfstream(filepath)};
+
+//     file << str;
+// }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   linear_regression.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fox <fox@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/24 23:12:14 by fox               #+#    #+#             */
-/*   Updated: 2026/09/24 23:39:35 by fox              ###   ########.fr       */
+/*   Updated: 2026/09/25 12:38:12 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,9 @@ nc::NdArray<double> gradient(const nc::NdArray<double>& X,
  * The loop stops when the cost no longer changes significantly or when the
  * maximum number of iterations is reached.
  */
-void gradient_descent(const nc::NdArray<double>& X,
-                      const nc::NdArray<double>& Y, nc::NdArray<double>& theta,
-                      double learning_rate, size_t n_iteration) {
+void gradientDescent(const nc::NdArray<double>& X, const nc::NdArray<double>& Y,
+                     nc::NdArray<double>& theta, double learning_rate,
+                     size_t n_iteration) {
     double previous_cost = std::numeric_limits<double>::max();
 
     for (size_t i = 0; i < n_iteration; ++i) {
