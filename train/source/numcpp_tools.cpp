@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/25 10:04:25 by root              #+#    #+#             */
-/*   Updated: 2026/09/25 13:05:12 by root             ###   ########.fr       */
+/*   Updated: 2026/09/25 14:37:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,10 +131,3 @@ void nc_tools::dumpToTxt(std::string_view str, const char* filepath) {
 
     file << str;
 }
-
-// void nc_tools::dumpToTxt(const std::string& str, const char* filepath) {
-//     /* Open file */
-//     std::ofstream file{openOfstream(filepath)};
-
-//     file << str;
-// }

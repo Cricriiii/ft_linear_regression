@@ -1,16 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   predict.hpp                                        :+:      :+:    :+:   */
+/*   numcpp_tools.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/22 18:08:25 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/22 18:08:33 by cgajean          ###   ########.fr       */
+/*   Created: 2026/09/25 09:52:59 by root              #+#    #+#             */
+/*   Updated: 2026/09/25 15:16:53 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-void function() {
-}
+#include "NumCpp.hpp"
+
+namespace nc_tools {
+
+std::vector<double> genFromTxt(const char* filepath);
+}  // namespace nc_tools

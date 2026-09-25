@@ -3,17 +3,93 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/22 16:59:08 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/22 18:12:58 by cgajean          ###   ########.fr       */
+/*   Updated: 2026/09/25 16:00:39 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "predict.hpp"
+#include <cstdlib>
+#include <exception>
+#include <iostream>
+#include <numcpp_tools.hpp>
+#include <optional>
+#include <sstream>
 
-int main(void) {
-    // foo();
+#include <signal.h>
+#include <atomic>
 
+#include "NumCpp.hpp"
+#include "linear_regression_types.hpp"
+
+
+namespace {
+    volatile bool running = 1;
+    void handleInterrupt(int signal) {
+        if (signal == SIGINT) {
+            running = 0; 
+        }
+    }
+}
+
+__attribute__((constructor)) void printBanner() {
+#ifdef __unix__
+    std::system("clear");
+#endif
+
+    signal(SIGINT, handleInterrupt);    
+    
+    std::cout << "ｆｔ＿ｌｉｎｅａｒ＿ｒｅｇｒｅｓｓｉｏｎ\n" << std::endl;
+}
+
+std::optional<double> readDouble() {
+    std::string input{};
+
+    /* Get input and flush leftovers */
+    std::cin >> input;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    size_t pos{};
+    try {
+        double value{std::stod(input.c_str(), &pos)};
+
+        if (pos == input.length()) {
+            return value;
+        } else {
+            return std::nullopt;
+        }
+
+    } catch (std::invalid_argument& e) {
+        return std::nullopt;
+    }
+}
+
+double readMileage() {
+    std::optional<double> value{};
+    while (true) {
+        std::cout << "Enter a mileage: ";
+        if ((value = readDouble()).has_value()) {
+            return *value;
+        } else {
+            std::cout << "incorrect input\n";
+        }
+    }
+}
+
+int main([[maybe_unused]] int argc, char** argv) {
+    try {
+        std::vector<double> data{nc_tools::genFromTxt(argv[1])};
+
+        while (running) {
+            double mileage = readMileage();
+            double estimated_price = round(std::max(mileage * data[0] + data[1], 0.0));
+
+            std::cout << "Estimated price: " << estimated_price << std::endl;
+        }
+    } catch (...) {
+        std::cerr << "predict: error: unexpected error\n";
+        return EXIT_FAILURE;
+    }
     return 0;
 }

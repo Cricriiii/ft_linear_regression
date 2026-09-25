@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/25 11:19:27 by root             ###   ########.fr        #
+#    Updated: 2026/09/25 14:39:49 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,14 +27,7 @@ CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG)
 
 PROGRAM			:= $(notdir $(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
 
-
-COMMON			:= common
-COMMON_DIR		:= ..
-COMMON_SRC		:= $(COMMON_DIR)/$(COMMON)/source
-COMMON_INC		:= $(COMMON_DIR)/$(COMMON)/include
-
 NUMCPP_INC		:= ../NumCpp/include
-ALL_LIBS_INC	:= $(COMMON_INC) -I $(NUMCPP_INC)
 
 SRC_DIR			:= source
 OBJ_DIR			:= .object
@@ -42,9 +35,6 @@ INC_DIR			:= include
 
 FILES_CPP		:= $(shell find . -type f -wholename "*.cpp")
 FILES_O			:= $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(FILES_CPP))
-
-COMMON_CPP		:= $(shell find ../$(COMMON) -type f -wholename "*.cpp")
-COMMON_O		:= $(patsubst $(COMMON_SRC)/%.cpp, $(OBJ_DIR)/$(COMMON)/%.o, $(COMMON_CPP))
 
 
 # ---------------------------------------------------------------------------- #
@@ -55,15 +45,12 @@ COMMON_O		:= $(patsubst $(COMMON_SRC)/%.cpp, $(OBJ_DIR)/$(COMMON)/%.o, $(COMMON_
 all: $(PROGRAM)
 
 $(PROGRAM): $(FILES_O) $(COMMON_O)
-	$(CXX) $(CXX_FLAGS) -I $(ALL_LIBS_INC) -I $(INC_DIR) $^ -o $(PROGRAM)
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) $^ -o $(PROGRAM)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) -I $(ALL_LIBS_INC) -I $(INC_DIR) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) -c $< -o $@
 
-$(OBJ_DIR)/$(COMMON)/%.o: $(COMMON_SRC)/%.cpp
-	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) -I $(ALL_LIBS_INC) -I $(INC_DIR) -c $< -o $@
 
 ## Call 'fclean' then 'all' targets
 re:

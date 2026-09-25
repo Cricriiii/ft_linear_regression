@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
+#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/24 23:09:52 by fox              ###   ########.fr        #
+#    Updated: 2026/09/25 14:39:49 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,9 +27,7 @@ CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG)
 
 PROGRAM			:= $(notdir $(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
 
-ROOT_INC		:= ../common
 NUMCPP_INC		:= ../NumCpp/include
-ALL_LIBS_INC	:= $(ROOT_INC) -I $(NUMCPP_INC)
 
 SRC_DIR			:= source
 OBJ_DIR			:= .object
@@ -46,12 +44,13 @@ FILES_O			:= $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(FILES_CPP))
 ## Build the whole project
 all: $(PROGRAM)
 
-$(PROGRAM): $(FILES_O)
-	$(CXX) $(CXX_FLAGS) -I $(ALL_LIBS_INC) -I $(INC_DIR) $^ -o $(PROGRAM)
+$(PROGRAM): $(FILES_O) $(COMMON_O)
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) $^ -o $(PROGRAM)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) -I $(ALL_LIBS_INC) -I $(INC_DIR) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) -c $< -o $@
+
 
 ## Call 'fclean' then 'all' targets
 re:
@@ -98,3 +97,5 @@ help:
 
 
 .PHONY: all re test test_docker clean fclean format help
+
+.SECONDARY: $(FILES_O)

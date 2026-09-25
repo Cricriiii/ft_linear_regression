@@ -34,7 +34,8 @@ void dumpCSV(const LinearRegression& lr, const char* ref_file) {
     nc_tools::dumpToTxt(ss.str(), path_out.c_str());
 }
 
-std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X, const nc::NdArray<double>& Y) {
+std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X,
+                                                 const nc::NdArray<double>& Y) {
     std::optional<Candidate> best_fit{};
     std::vector<double> steps{0.001, 0.01, 0.0001, 0.1, 1.0};
 
@@ -54,7 +55,7 @@ std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X, c
     return best_fit;
 }
 
-int main([[maybe_unused]]int argc, char** argv) {
+int main([[maybe_unused]] int argc, char** argv) {
     try {
         /* Read file */
         nc::NdArray<double> raw_data{nc_tools::genFromTxt(argv[1])};
