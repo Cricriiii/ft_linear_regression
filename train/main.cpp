@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/22 16:59:08 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/25 16:11:23 by root             ###   ########.fr       */
+/*   Updated: 2026/09/25 18:02:06 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,13 @@
 #include "numcpp_tools.hpp"
 
 #include <chrono>
+#include <filesystem>
 
+namespace plt = matplotlibcpp;
+
+constexpr size_t pltWidth = 1200;
+constexpr size_t pltHeight = 700;
+constexpr size_t pltThick = 10;
 constexpr std::size_t n_iterations = 1000;
 
 void dumpCSV(const LinearRegression& lr, const char* ref_file) {
@@ -42,6 +48,7 @@ std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X,
 
     /* Find optimum */
     for (double step : steps) {
+        std::cout << "Testing " << n_iterations << " iterations with step = " << step << std::endl;
         /* Each step is evaluated from the same initial model. */
         auto theta{nc::zeros<double>({2, 1})};
         gradientDescent(X, Y, theta, step, n_iterations);
@@ -54,6 +61,40 @@ std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X,
         }
     }
     return best_fit;
+}
+
+void plot(const nc::NdArray<double>& X, const nc::NdArray<double>& Y,  double theta_1, double theta_0) {
+    std::vector<double> vx{}, vy{};
+
+    plt::backend("Agg");
+    /* Extract raw data values */
+    uint32_t size = X.size();
+    for (uint32_t i = 0; i < size; ++i) {
+        vx.push_back(X[i]);
+        vy.push_back(Y[i]);
+    }
+
+    plt::figure_size(pltWidth, pltHeight);
+    plt::scatter(vx, vy, pltThick);
+
+    double min_x = *std::min_element(vx.begin(), vx.end());
+    double max_x = *std::max_element(vx.begin(), vx.end());
+
+    std::vector<double> trend_x{min_x, max_x};
+    std::vector<double> trend_y{trend_x[0] * theta_1 + theta_0, trend_x[1] * theta_1 + theta_0};
+    plt::plot(trend_x, trend_y, "r--");
+    
+    /* Save output as png */
+    const auto output_dir = std::filesystem::path{"output"};
+    std::filesystem::create_directories(output_dir);
+    const auto now = std::chrono::system_clock::now();
+    const auto timestamp =
+        std::chrono::duration_cast<std::chrono::milliseconds>(
+            now.time_since_epoch())
+            .count();
+    const auto output_file =
+        output_dir / ("plot_" + std::to_string(timestamp) + ".png");
+    plt::save(output_file.string());
 }
 
 int main([[maybe_unused]] int argc, char** argv) {
@@ -92,6 +133,9 @@ int main([[maybe_unused]] int argc, char** argv) {
         dumpCSV(LinearRegression{theta_1, theta_0, x_mean, x_stdev, y_mean,
                                  y_stdev},
                 argv[1]);
+
+
+        plot(raw_data(raw_data.rSlice(), 0), raw_data(raw_data.rSlice(), 1), theta_1, theta_0);
 
     } catch (std::runtime_error& e) {
         std::cerr << "\ntrain: error: " << e.what();

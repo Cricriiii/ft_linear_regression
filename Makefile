@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/25 16:25:11 by root             ###   ########.fr        #
+#    Updated: 2026/09/25 18:13:56 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ TRAIN		:= train
 PRECIS		:= precision
 NUMCPP		:= NumCpp
 MATPLOT		:= matplotlib-cpp
+OUTPUT_IMG	:= output
 
 
 # ---------------------------------------------------------------------------- #
@@ -81,6 +82,7 @@ fclean:
 	+$(MAKE) -C $(PREDICT) fclean
 	+$(MAKE) -C $(TRAIN) fclean
 	+$(MAKE) -C $(PRECIS) fclean
+	rm -rf $(OUTPUT_IMG)
 
 ## Call 'fclean' target and wipe imported librairies
 reset:
@@ -105,6 +107,27 @@ docker_run:
 format:
 	@find . -name "*.cpp" -o -name "*.hpp" | xargs clang-format -i
 
+## Generate a random regression dataset
+regression:
+	@python3 -c 'import csv; \
+	import secrets; \
+	import numpy as np; \
+	from sklearn.datasets import make_regression; \
+	seed = secrets.randbits(32); \
+	rng = np.random.default_rng(seed); \
+	x_scale = 10 ** rng.uniform(1, 5); \
+	y_scale = 10 ** rng.uniform(1, 5); \
+	noise = 10 ** rng.uniform(0, 3); \
+	x, y = make_regression(n_samples=10000, n_features=1, noise=noise, random_state=seed); \
+	x *= x_scale; \
+	y *= y_scale; \
+	file = open("data/generated.csv", "w", newline=""); \
+	writer = csv.writer(file, lineterminator="\n"); \
+	writer.writerow(["x", "y"]); \
+	writer.writerows((features[0], target) for features, target in zip(x, y)); \
+	file.close(); \
+	print(f"Generated data/generated.csv with seed {seed}, x scale {x_scale:.2f}, y scale {y_scale:.2f}, noise {noise:.2f}")';
+
 # Provided by https://gitlab.com/depressiveRobot/make-help/blob/master/help.mk
 ## Show this help
 help:
@@ -120,5 +143,4 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 	@echo
 
-
-.PHONY: all re rere docker test docker_run clean fclean reset format help
+.PHONY: all re rere docker test docker_run clean fclean reset format regression help
