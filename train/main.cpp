@@ -6,16 +6,16 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/22 16:59:08 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/25 18:02:06 by root             ###   ########.fr       */
+/*   Updated: 2026/09/25 23:07:09 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "matplotlibcpp.h"
-#include "linear_regression.hpp"
-#include "numcpp_tools.hpp"
 
 #include <chrono>
-#include <filesystem>
+
+#include "linear_regression.hpp"
+#include "numcpp_tools.hpp"
 
 namespace plt = matplotlibcpp;
 
@@ -48,7 +48,8 @@ std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X,
 
     /* Find optimum */
     for (double step : steps) {
-        std::cout << "Testing " << n_iterations << " iterations with step = " << step << std::endl;
+        std::cout << "Testing " << n_iterations
+                  << " iterations with step = " << step << std::endl;
         /* Each step is evaluated from the same initial model. */
         auto theta{nc::zeros<double>({2, 1})};
         gradientDescent(X, Y, theta, step, n_iterations);
@@ -63,7 +64,8 @@ std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X,
     return best_fit;
 }
 
-void plot(const nc::NdArray<double>& X, const nc::NdArray<double>& Y,  double theta_1, double theta_0) {
+void plot(const nc::NdArray<double>& X, const nc::NdArray<double>& Y,
+          double theta_1, double theta_0) {
     std::vector<double> vx{}, vy{};
 
     plt::backend("Agg");
@@ -81,9 +83,10 @@ void plot(const nc::NdArray<double>& X, const nc::NdArray<double>& Y,  double th
     double max_x = *std::max_element(vx.begin(), vx.end());
 
     std::vector<double> trend_x{min_x, max_x};
-    std::vector<double> trend_y{trend_x[0] * theta_1 + theta_0, trend_x[1] * theta_1 + theta_0};
+    std::vector<double> trend_y{trend_x[0] * theta_1 + theta_0,
+                                trend_x[1] * theta_1 + theta_0};
     plt::plot(trend_x, trend_y, "r--");
-    
+
     /* Save output as png */
     const auto output_dir = std::filesystem::path{"output"};
     std::filesystem::create_directories(output_dir);
@@ -134,8 +137,8 @@ int main([[maybe_unused]] int argc, char** argv) {
                                  y_stdev},
                 argv[1]);
 
-
-        plot(raw_data(raw_data.rSlice(), 0), raw_data(raw_data.rSlice(), 1), theta_1, theta_0);
+        plot(raw_data(raw_data.rSlice(), 0), raw_data(raw_data.rSlice(), 1),
+             theta_1, theta_0);
 
     } catch (std::runtime_error& e) {
         std::cerr << "\ntrain: error: " << e.what();

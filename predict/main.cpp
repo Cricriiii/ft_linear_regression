@@ -6,10 +6,13 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/22 16:59:08 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/25 16:00:39 by root             ###   ########.fr       */
+/*   Updated: 2026/09/25 22:17:36 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <signal.h>
+
+#include <atomic>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
@@ -17,29 +20,25 @@
 #include <optional>
 #include <sstream>
 
-#include <signal.h>
-#include <atomic>
-
 #include "NumCpp.hpp"
 #include "linear_regression_types.hpp"
 
-
 namespace {
-    volatile bool running = 1;
-    void handleInterrupt(int signal) {
-        if (signal == SIGINT) {
-            running = 0; 
-        }
+volatile bool running = 1;
+void handleInterrupt(int signal) {
+    if (signal == SIGINT) {
+        running = 0;
     }
 }
+}  // namespace
 
 __attribute__((constructor)) void printBanner() {
 #ifdef __unix__
     std::system("clear");
 #endif
 
-    signal(SIGINT, handleInterrupt);    
-    
+    signal(SIGINT, handleInterrupt);
+
     std::cout << "ｆｔ＿ｌｉｎｅａｒ＿ｒｅｇｒｅｓｓｉｏｎ\n" << std::endl;
 }
 
@@ -83,7 +82,8 @@ int main([[maybe_unused]] int argc, char** argv) {
 
         while (running) {
             double mileage = readMileage();
-            double estimated_price = round(std::max(mileage * data[0] + data[1], 0.0));
+            double estimated_price =
+                round(std::max(mileage * data[0] + data[1], 0.0));
 
             std::cout << "Estimated price: " << estimated_price << std::endl;
         }

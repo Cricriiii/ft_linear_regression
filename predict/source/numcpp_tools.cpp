@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/25 10:04:25 by root              #+#    #+#             */
-/*   Updated: 2026/09/25 15:28:17 by root             ###   ########.fr       */
+/*   Updated: 2026/09/25 22:19:38 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,18 @@
 #include <optional>
 
 namespace {
-std::optional<std::vector<double>> parseNumericString(const std::string& line,
-                                                      char sep) {
-    std::vector<double> values{};
-    std::string field{};
-
+std::optional<std::stringstream> parseDateString(const std::string& line,
+                                                 char sep) {
     std::chrono::system_clock::time_point tp;
     std::stringstream ss{line};
+    std::string field{};
 
-    /* Parse first field: date */
+    /* If field is empty */
     if (!std::getline(ss, field, sep)) {
         return std::nullopt;
     }
 
+    /* Parse first field: date */
     std::chrono::system_clock::time_point date{};
     std::stringstream dateStream{field};
     dateStream >> std::chrono::parse("%F %T", date);
@@ -38,6 +37,21 @@ std::optional<std::vector<double>> parseNumericString(const std::string& line,
     if (dateStream.fail()) {
         return std::nullopt;
     }
+    return ss;
+}
+
+std::optional<std::vector<double>> parseNumericString(const std::string& line,
+                                                      char sep) {
+    std::vector<double> values{};
+    std::string field{};
+
+    /* Parse date field */
+    std::optional<std::stringstream> valid_stream{parseDateString(line, sep)};
+    if (!valid_stream.has_value()) {
+        return std::nullopt;
+    }
+
+    std::stringstream ss{std::move(*valid_stream)};
 
     /* Next fields: numerics */
     while (std::getline(ss, field, sep)) {
