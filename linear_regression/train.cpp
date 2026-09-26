@@ -6,7 +6,7 @@
 /*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/26 16:19:05 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/26 17:36:55 by cgajean          ###   ########.fr       */
+/*   Updated: 2026/09/26 17:44:48 by cgajean          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,10 @@ void dumpCSV(const LinearRegression& lr, const char* ref_file) {
 std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X,
                                                  const nc::NdArray<double>& Y) {
     std::optional<Candidate> best_fit{};
-    std::vector<double> steps{0.001, 0.01, 0.0001, 0.1, 1.0};
+    std::vector<double> steps{0.001, 0.01, 0.0001, 0.1};
 
     /* Find optimum */
     for (double step : steps) {
-        std::cout << "Testing " << n_iterations
-                  << " iterations with step = " << step << std::endl;
         /* Each step is evaluated from the same initial model. */
         auto theta{nc::zeros<double>({2, 1})};
         gradientDescent(X, Y, theta, step, n_iterations);

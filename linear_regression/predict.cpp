@@ -6,35 +6,17 @@
 /*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/26 16:19:00 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/26 16:19:02 by cgajean          ###   ########.fr       */
+/*   Updated: 2026/09/26 17:43:02 by cgajean          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
-
-#include <atomic>
-#include <cstdlib>
 #include <exception>
 #include <iostream>
-#include <numcpp_tools.hpp>
 #include <optional>
-#include <sstream>
 
 #include "NumCpp.hpp"
 #include "linear_regression_types.hpp"
-
-namespace {
-volatile bool running = 1;
-
-/**
- * SIGINT handler: request the end of the prediction loop
- */
-void handleInterrupt(int signal) {
-    if (signal == SIGINT) {
-        running = 0;
-    }
-}
-}  // namespace
+#include "numcpp_tools.hpp"
 
 /**
  * Run before main: clear the terminal, install the SIGINT handler and print
@@ -44,8 +26,6 @@ __attribute__((constructor)) void printBanner() {
 #ifdef __unix__
     std::system("clear");
 #endif
-
-    signal(SIGINT, handleInterrupt);
 
     std::cout << "ｆｔ＿ｌｉｎｅａｒ＿ｒｅｇｒｅｓｓｉｏｎ\n" << std::endl;
 }
@@ -73,18 +53,24 @@ std::optional<double> readDouble() {
 
     } catch (std::invalid_argument& e) {
         return std::nullopt;
+    } catch (std::out_of_range& e) {
+        return std::nullopt;
     }
 }
 
 /**
- * Prompt the user for a mileage until a valid number is entered
+ * Prompt the user for a mileage until a valid number is entered.
+ * Return nullopt when stdin reaches EOF (Ctrl+D).
  */
-double readMileage() {
+std::optional<double> readMileage() {
     std::optional<double> value{};
     while (true) {
         std::cout << "Enter a mileage: ";
         if ((value = readDouble()).has_value()) {
-            return *value;
+            return value;
+        } else if (std::cin.eof()) {
+            std::cout << std::endl;
+            return std::nullopt;
         } else {
             std::cout << "incorrect input\n";
         }
@@ -95,10 +81,13 @@ int main([[maybe_unused]] int argc, char** argv) {
     try {
         std::vector<double> data{nc_tools::genLatestFromTxt(argv[1])};
 
-        while (running) {
-            double mileage = readMileage();
+        while (true) {
+            std::optional<double> mileage = readMileage();
+            if (!mileage.has_value()) {
+                break;
+            }
             double estimated_price =
-                round(std::max(mileage * data[0] + data[1], 0.0));
+                round(std::max(*mileage * data[0] + data[1], 0.0));
 
             std::cout << "Estimated price: " << estimated_price << std::endl;
         }
