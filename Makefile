@@ -6,7 +6,7 @@
 #    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/26 17:16:58 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/26 18:00:42 by cgajean          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -97,7 +97,6 @@ clean:
 ## Call 'clean' target and delete executable files
 fclean:
 	+$(MAKE) -C $(LINEAR_REG) fclean TRAIN=$(TRAIN) PREDICT=$(PREDICT) PRECIS=$(PRECIS)
-	rm -rf $(OUTPUT_IMG)
 
 ## Call 'fclean' target and wipe imported librairies
 reset:

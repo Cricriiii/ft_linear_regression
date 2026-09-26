@@ -6,7 +6,7 @@
 /*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/26 16:19:05 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/26 17:44:48 by cgajean          ###   ########.fr       */
+/*   Updated: 2026/09/26 18:09:39 by cgajean          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,9 @@ int main([[maybe_unused]] int argc, char** argv) {
 
         plot(raw_data(raw_data.rSlice(), 0), raw_data(raw_data.rSlice(), 1),
              theta_1, theta_0);
+
+        std::cout << "theta_1 = " << theta_1 << "\ntheta_0 = " << theta_0
+                  << std::endl;
 
     } catch (std::runtime_error& e) {
         std::cerr << "\ntrain: error: " << e.what();
