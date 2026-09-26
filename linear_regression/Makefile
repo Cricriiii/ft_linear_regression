@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
+#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/26 10:02:44 by root             ###   ########.fr        #
+#    Updated: 2026/09/26 13:05:53 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,26 +14,22 @@
 # compiler                                                                     #
 # ---------------------------------------------------------------------------- #
 
+# General rules
 CXX				:= g++
 CXX_STD			:= -std=c++23
 CXX_EFLAGS		:= -Werror -Wall -Wextra
 CXX_DEBUG		:= -g3
 CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG)
- 
-# train est seul a avoir besoin de -O3 et de l'embedding Python/NumPy
-# (matplotlib-cpp pilote libpython pour tracer la courbe de cout).
-# -O3 + -g3 ensemble pour predict/precision serait contre-productif : variables
-# optimisees, debogueur qui ment sur les valeurs.
+
+# Train program
 TRAIN_STD		:= -std=c++23 -O3
-PYTHON_CFLAGS	:= $(shell python3-config --includes)
-PYTHON_LDFLAGS	:= $(shell python3-config --embed --ldflags)
-NUMPY_CFLAGS	:= -I $(shell python3 -c 'import numpy; print(numpy.get_include())')
-TRAIN_FLAGS		:= $(TRAIN_STD) $(CXX_EFLAGS) $(CXX_DEBUG) \
+PYTHON_CFLAGS	= $(shell python3-config --includes)
+PYTHON_LDFLAGS	= $(shell python3-config --embed --ldflags)
+NUMPY_CFLAGS	= -I $(shell python3 -c 'import numpy; print(numpy.get_include())')
+TRAIN_FLAGS		= $(TRAIN_STD) $(CXX_EFLAGS) $(CXX_DEBUG) \
 				   $(PYTHON_CFLAGS) $(NUMPY_CFLAGS) \
 				   -Wno-deprecated-declarations
  
-
-
 
 # ---------------------------------------------------------------------------- #
 # files                                                                        #
@@ -105,7 +101,6 @@ $(OBJ_DIR)/$(PRECIS)/%.o: %.cpp
 re:
 	+$(MAKE) fclean
 	+$(MAKE) all
-
 
 
 # ---------------------------------------------------------------------------- #

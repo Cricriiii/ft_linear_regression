@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
+#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/26 10:09:39 by root             ###   ########.fr        #
+#    Updated: 2026/09/26 14:23:13 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,9 @@ OUTPUT_IMG	:= output
 # ---------------------------------------------------------------------------- #
 
 ## Build whole project
-all: $(TRAIN) $(PREDICT) $(PRECIS)
+all:
+	+$(MAKE) $(NUMCPP) $(MATPLOT)
+	+$(MAKE) $(TRAIN) $(PREDICT) $(PRECIS)
 
 ## Build train program
 $(TRAIN):
@@ -54,7 +56,7 @@ $(PRECIS):
 ## Build whole project in a Docker environment
 docker:
 	+$(MAKE) fclean
-	docker build -t linear:1.0 .
+	docker build -t $(LINEAR_REG):1.0 .
 
 ## Call 'fclean' then 'all' targets
 re:
@@ -69,7 +71,7 @@ rere:
 ## Import NumCpp
 $(NUMCPP):
 ifeq ($(wildcard $(NUMCPP)),)
-	git clone https://github.com/dpilger26/NumCpp.git $(NUMCPP);
+	git clone https://github.com/dpilger26/NumCpp.git $@;
 else
 	@echo "$(NUMCPP) is already installed"
 endif
@@ -77,7 +79,7 @@ endif
 ## Import matplotlib-cpp
 $(MATPLOT):
 ifeq ($(wildcard $(MATPLOT)),)
-	git clone https://github.com/lava/matplotlib-cpp.git $(MATPLOT)
+	git clone https://github.com/lava/matplotlib-cpp.git $@
 else
 	@echo "$(MATPLOT) is already installed"
 endif
@@ -107,8 +109,11 @@ reset:
 # test                                                                         #
 # ---------------------------------------------------------------------------- #
 
+# Find the actual image name among the possible name variations induced by
+# the use of Podman or Docker, such as a "localhost/" prefixed name.
+## Run docker image
 docker_run:
-	docker run -it localhost/linear:1.0
+	docker run -it $(shell docker images | awk '{print $$1}' | grep $(LINEAR_REG))
 
 
 # ---------------------------------------------------------------------------- #

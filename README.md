@@ -45,8 +45,9 @@ ft_linear_regression/
 
 - `g++` with C++23 support
 - `make`
-- `git` (to auto-clone the NumCpp/matplotlib-cpp dependencies)
-- `python3` with development headers (`python3-config`) and `numpy`, required by `train` for the libpython embedding used to draw plots
+- `git`
+- `python3` with development headers (`python3-dev`), `python3-numpy`, `python3-matplotlib` and `python3-sklearn`
+- `docker` as an alternative to local build
 
 ### Build
 
