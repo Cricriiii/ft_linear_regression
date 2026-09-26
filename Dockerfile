@@ -6,44 +6,36 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:45:44 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/26 08:40:03 by root             ###   ########.fr        #
+#    Updated: 2026/09/26 10:23:30 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM fedora:44
 
 # Copy the project files
-WORKDIR /linear
+WORKDIR /projects
 
 COPY data data
-COPY include include
-COPY predict predict
-COPY train train
-COPY precision precision
+COPY linear_regression linear_regression
 COPY Makefile Makefile
 
-# Install dependencies
-# RUN dnf update && dnf install -y g++ make git && \
-#     git clone https://github.com/dpilger26/NumCpp.git numcpp && \
-#     dnf remove -y git && \
-#     rm -rf /var/cache/dnf
-
 # # Install dependencies
-RUN dnf update && dnf install -y \
-    g++ \
-    make \
-    cmake \
-    boost-devel \
-    git \
-    python3-devel \
-    python3-numpy \
-    python3-matplotlib \
-    python3-scikit-learn \
-    git clone https://github.com/dpilger26/NumCpp.git numcpp && \
-    cd $_ && mkdir build && cd $_ && cmake .. && \
-    cmake --build . --target install && \
-    dnf remove -y cmake git && \    
-    rm -rf /var/cache/dnf
+RUN dnf install -y \
+        g++ \
+        boost-devel \
+        make \
+        gdb \
+        git \
+        zsh \
+        curl \
+        valgrind \
+        python3-devel \
+        python3-numpy \
+        python3-matplotlib \
+        python3-scikit-learn \
+    && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+    && dnf clean all \
+    && rm -rf /var/cache/dnf
 
 # Compile the project
 RUN make
