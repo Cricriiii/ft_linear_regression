@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
+#    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/26 15:21:18 by fox              ###   ########.fr        #
+#    Created: 2026/09/26 16:18:48 by cgajean           #+#    #+#              #
+#    Updated: 2026/09/26 17:17:42 by cgajean          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@
 # ---------------------------------------------------------------------------- #
 
 # General rules
-CXX				:= g++
+CXX				:= g++ -MMD -MP
 CXX_STD			:= -std=c++23
 CXX_EFLAGS		:= -Werror -Wall -Wextra
 CXX_DEBUG		:= -g3
@@ -57,11 +57,14 @@ INC_DIR			:= include
 # Source code of each program
 TRAIN_SRC		:= train.cpp \
 				   		$(SRC_DIR)/linear_regression.cpp \
-				   		$(SRC_DIR)/numcpp_tools.cpp
+				   		$(SRC_DIR)/numcpp_tools.cpp \
+						$(SRC_DIR)/open_streams.cpp
 PREDICT_SRC		:= predict.cpp \
-				   		$(SRC_DIR)/numcpp_tools.cpp
+				   		$(SRC_DIR)/numcpp_tools.cpp \
+						$(SRC_DIR)/open_streams.cpp
 PRECIS_SRC		:= precision.cpp \
-				   		$(SRC_DIR)/numcpp_tools.cpp
+				   		$(SRC_DIR)/numcpp_tools.cpp \
+						$(SRC_DIR)/open_streams.cpp
 
 # Object files of each
 TRAIN_OBJ		:= $(patsubst %.cpp,$(OBJ_DIR)/$(TRAIN)/%.o,$(TRAIN_SRC))
@@ -88,15 +91,17 @@ $(PRECIS): $(PRECIS_OBJ)
 $(OBJ_DIR)/$(TRAIN)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(TRAIN_FLAGS) -I $(NUMCPP_INC) -I $(MATPLOT_INC) -I $(INC_DIR) -c $< -o $@
- 
+
 $(OBJ_DIR)/$(PREDICT)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) -c $< -o $@
- 
+
 $(OBJ_DIR)/$(PRECIS)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) -c $< -o $@
- 
+
+-include $(TRAIN_OBJ:.o=.d) $(PREDICT_OBJ:.o=.d) $(PRECIS_OBJ:.o=.d)
+
 ## Call 'fclean' then 'all' targets
 re:
 	+$(MAKE) fclean

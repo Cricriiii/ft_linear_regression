@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   train.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/22 16:59:08 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/25 23:07:09 by root             ###   ########.fr       */
+/*   Created: 2026/09/26 16:19:05 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/26 17:36:55 by cgajean          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,10 @@ constexpr size_t pltHeight = 700;
 constexpr size_t pltThick = 10;
 constexpr std::size_t n_iterations = 1000;
 
+/**
+ * Append the trained model, timestamped, to "<ref_file>_result.csv".
+ * The CSV header is written first if the file doesn't exist or is empty.
+ */
 void dumpCSV(const LinearRegression& lr, const char* ref_file) {
     std::string path_out{std::string{ref_file} + "_result.csv"};
     auto path{std::filesystem::path(path_out)};
@@ -41,6 +45,10 @@ void dumpCSV(const LinearRegression& lr, const char* ref_file) {
     nc_tools::dumpToTxt(ss.str(), path_out.c_str());
 }
 
+/**
+ * Run gradient descent with several learning rates on normalized data and
+ * return the candidate with the lowest final cost.
+ */
 std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X,
                                                  const nc::NdArray<double>& Y) {
     std::optional<Candidate> best_fit{};
@@ -64,6 +72,10 @@ std::optional<Candidate> computeLinearRegression(const nc::NdArray<double>& X,
     return best_fit;
 }
 
+/**
+ * Plot the dataset and the regression line, then save the figure as a
+ * timestamped PNG in the "output" directory.
+ */
 void plot(const nc::NdArray<double>& X, const nc::NdArray<double>& Y,
           double theta_1, double theta_0) {
     std::vector<double> vx{}, vy{};

@@ -3,20 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   numcpp_tools.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/25 10:04:25 by root              #+#    #+#             */
-/*   Updated: 2026/09/26 09:35:23 by root             ###   ########.fr       */
+/*   Created: 2026/09/26 16:18:36 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/26 16:43:26 by cgajean          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "numcpp_tools.hpp"
 
-#include <filesystem>
 #include <fstream>
 #include <optional>
+#include <sstream>
 
+#include "open_streams.hpp"
+
+/**
+ * Nameless namespace containing utilitary functions called in this file scope
+ */
 namespace {
+
+/**
+ * Parse the first column (date) of the CSV files
+ */
 std::optional<std::stringstream> parseDateString(const std::string& line,
                                                  char sep) {
     std::chrono::system_clock::time_point date{};
@@ -36,6 +45,9 @@ std::optional<std::stringstream> parseDateString(const std::string& line,
     return stream;
 }
 
+/**
+ * Parse numerical only CSV input files
+ */
 std::optional<std::vector<double>> parseNumericString(const std::string& line,
                                                       char sep) {
     std::istringstream stream{line};
@@ -61,6 +73,9 @@ std::optional<std::vector<double>> parseNumericString(const std::string& line,
     return values;
 }
 
+/**
+ * Parse date + numerical CSV input files
+ */
 std::optional<std::vector<double>> parseDatedNumericString(
     const std::string& line, char sep) {
     std::optional<std::stringstream> valid_stream{parseDateString(line, sep)};
@@ -91,48 +106,11 @@ std::optional<std::vector<double>> parseDatedNumericString(
     return values;
 }
 
-std::ofstream openOfstream(std::string&& filepath,
-                           std::ios_base::openmode mode = std::ios::binary |
-                                                          std::ofstream::app) {
-    /* Test filepath */
-    if (filepath.empty()) {
-        throw std::runtime_error{" path to file is required\n"};
-    }
-
-    /* Open file */
-    std::ofstream file{filepath.c_str(), mode};
-    if (!file.is_open()) {
-        throw std::runtime_error{std::move(filepath + " couldn't be opened\n")};
-    }
-    return file;
-}
-
-/**
- * Open file istream and throw if it fails.
- */
-std::ifstream openIfstream(const char* filepath) {
-    /* Test filepath */
-    if (filepath == nullptr) {
-        throw std::runtime_error{" path to file is required\n"};
-    }
-
-    auto path{std::filesystem::path(filepath)};
-    if (!std::filesystem::exists(path)) {
-        throw std::runtime_error{std::string{filepath} + " doesn't exist\n"};
-    } else if (std::filesystem::is_empty(path)) {
-        throw std::runtime_error{std::string{filepath} + " is empty\n"};
-    }
-
-    /* Open file */
-    std::ifstream file{filepath, std::ios::binary};
-    if (!file.is_open()) {
-        throw std::runtime_error{std::string{filepath} +
-                                 " couldn't be opened\n"};
-    }
-    return file;
-}
 }  // namespace
 
+/**
+ * GEN FROM TXT
+ */
 nc::NdArray<double> nc_tools::genFromTxt(const char* filepath) {
     nc::NdArray<double> matrix{};
     std::optional<std::vector<double>> values{};
@@ -174,6 +152,9 @@ nc::NdArray<double> nc_tools::genFromTxt(const char* filepath) {
     return matrix;
 }
 
+/**
+ * GEN LATEST FROM TXT
+ */
 std::vector<double> nc_tools::genLatestFromTxt(const char* filepath) {
     std::ifstream file{openIfstream(filepath)};
     std::chrono::system_clock::time_point latest_date{};
@@ -199,10 +180,12 @@ std::vector<double> nc_tools::genLatestFromTxt(const char* filepath) {
     return *values;
 }
 
+/**
+ * DUMP TO TXT
+ */
 void nc_tools::dumpToTxt(std::string_view str, const char* filepath) {
     /* Open file */
     std::ofstream file{openOfstream(filepath)};
 
     file << str;
 }
-

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   predict.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fox <fox@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/22 16:59:08 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/26 15:19:22 by fox              ###   ########.fr       */
+/*   Created: 2026/09/26 16:19:00 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/26 16:19:02 by cgajean          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@
 
 namespace {
 volatile bool running = 1;
+
+/**
+ * SIGINT handler: request the end of the prediction loop
+ */
 void handleInterrupt(int signal) {
     if (signal == SIGINT) {
         running = 0;
@@ -32,6 +36,10 @@ void handleInterrupt(int signal) {
 }
 }  // namespace
 
+/**
+ * Run before main: clear the terminal, install the SIGINT handler and print
+ * the program banner
+ */
 __attribute__((constructor)) void printBanner() {
 #ifdef __unix__
     std::system("clear");
@@ -42,6 +50,10 @@ __attribute__((constructor)) void printBanner() {
     std::cout << "ｆｔ＿ｌｉｎｅａｒ＿ｒｅｇｒｅｓｓｉｏｎ\n" << std::endl;
 }
 
+/**
+ * Read one word from stdin and convert it to a double.
+ * Return nullopt if the whole word isn't a valid number.
+ */
 std::optional<double> readDouble() {
     std::string input{};
 
@@ -64,6 +76,9 @@ std::optional<double> readDouble() {
     }
 }
 
+/**
+ * Prompt the user for a mileage until a valid number is entered
+ */
 double readMileage() {
     std::optional<double> value{};
     while (true) {

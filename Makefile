@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
+#    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/26 15:25:15 by fox              ###   ########.fr        #
+#    Updated: 2026/09/26 17:16:58 by cgajean          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@
 # ---------------------------------------------------------------------------- #
 
 MAKEFLAGS	+= -j $(shell nproc)
+VERSION		+= 1.0
 
 
 # ---------------------------------------------------------------------------- #
@@ -103,7 +104,6 @@ reset:
 	+$(MAKE) fclean
 	rm -rf $(NUMCPP)
 	rm -rf $(MATPLOT)
-	rm -r data/*_result*csv
 
 
 # ---------------------------------------------------------------------------- #
@@ -114,7 +114,9 @@ reset:
 # the use of Podman or Docker, such as a "localhost/" prefixed name.
 ## Run docker image
 docker_run:
-	docker run -it $(shell docker images | awk '{print $$1}' | grep $(LINEAR_REG))
+	@mkdir -p /tmp/$(OUTPUT_IMG)
+	docker run -v /tmp/$(OUTPUT_IMG):/projects/$(OUTPUT_IMG):Z \
+	-it $(shell docker images | awk '{print $$1}' | grep $(LINEAR_REG) | head -n1):$(VERSION)
 
 
 # ---------------------------------------------------------------------------- #

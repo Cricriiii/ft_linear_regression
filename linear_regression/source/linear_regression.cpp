@@ -3,39 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   linear_regression.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/24 23:12:14 by fox               #+#    #+#             */
-/*   Updated: 2026/09/25 12:38:12 by root             ###   ########.fr       */
+/*   Created: 2026/09/26 16:18:30 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/26 16:55:24 by cgajean          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "linear_regression.hpp"
 
 /**
- * Computes the predictions produced by the linear model.
- * X contains the input features and theta contains their coefficients.
+ * MODEL
  */
-nc::NdArray<double> model(const auto& X, const auto& theta) {
+inline nc::NdArray<double> model(const auto& X, const auto& theta) {
     return nc::dot(X, theta);
 }
 
 /**
- * Computes the mean squared error cost divided by two.
- * A lower cost means that the predictions are closer to the target values.
+ * COST
  */
 nc::NdArray<double> cost(const nc::NdArray<double>& X,
                          const nc::NdArray<double>& Y,
                          const nc::NdArray<double>& theta) {
-    auto mdl = model(X, theta);
-    auto sigma_sum = nc::sum(nc::square(mdl - Y));
-
-    return sigma_sum * (1.0 / (2 * Y.size()));
+    return nc::sum(nc::square(model(X, theta) - Y)) * (1.0 / (2 * Y.size()));
 }
 
 /**
- * Computes the gradient of the cost function for every parameter in theta.
- * The gradient indicates how each parameter should change to reduce the cost.
+ * GRADIENT
  */
 nc::NdArray<double> gradient(const nc::NdArray<double>& X,
                              const nc::NdArray<double>& Y,
@@ -47,10 +41,7 @@ nc::NdArray<double> gradient(const nc::NdArray<double>& X,
 }
 
 /**
- * Optimizes theta with gradient descent.
- * At each iteration, theta is moved in the opposite direction of the gradient.
- * The loop stops when the cost no longer changes significantly or when the
- * maximum number of iterations is reached.
+ * GRADIENT DESCENT algorithm
  */
 void gradientDescent(const nc::NdArray<double>& X, const nc::NdArray<double>& Y,
                      nc::NdArray<double>& theta, double learning_rate,
