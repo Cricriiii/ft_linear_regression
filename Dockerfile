@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:45:44 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/25 17:41:07 by root             ###   ########.fr        #
+#    Updated: 2026/09/26 08:40:03 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,8 +37,8 @@ RUN dnf update && dnf install -y \
     git \
     python3-devel \
     python3-numpy \
-    python3-matplotlib && \
-    python3-scikit-learn && \
+    python3-matplotlib \
+    python3-scikit-learn \
     git clone https://github.com/dpilger26/NumCpp.git numcpp && \
     cd $_ && mkdir build && cd $_ && cmake .. && \
     cmake --build . --target install && \

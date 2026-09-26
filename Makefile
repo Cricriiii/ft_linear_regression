@@ -6,18 +6,27 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/25 21:52:27 by root             ###   ########.fr        #
+#    Updated: 2026/09/26 10:09:39 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+
+# ---------------------------------------------------------------------------- #
+# compile                                                                      #
+# ---------------------------------------------------------------------------- #
+
+MAKEFLAGS	+= -j $(shell nproc)
 
 
 # ---------------------------------------------------------------------------- #
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-PREDICT		:= predict
+LINEAR_REG	:= linear_regression
 TRAIN		:= train
+PREDICT		:= predict
 PRECIS		:= precision
+
 NUMCPP		:= NumCpp
 MATPLOT		:= matplotlib-cpp
 OUTPUT_IMG	:= output
@@ -28,12 +37,19 @@ OUTPUT_IMG	:= output
 # ---------------------------------------------------------------------------- #
 
 ## Build whole project
-all:
-	+$(MAKE) $(NUMCPP)
-	+$(MAKE) $(MATPLOT)
-	+$(MAKE) -C $(PREDICT) -j $(nproc) all
-	+$(MAKE) -C $(TRAIN) -j $(nproc) all
-	+$(MAKE) -C $(PRECIS) -j $(nproc) all
+all: $(TRAIN) $(PREDICT) $(PRECIS)
+
+## Build train program
+$(TRAIN):
+	+$(MAKE) -C $(LINEAR_REG) $@ TRAIN=$@
+
+## Build predict program
+$(PREDICT):
+	+$(MAKE) -C $(LINEAR_REG) $@ PREDICT=$@
+
+## Build precision program
+$(PRECIS):
+	+$(MAKE) -C $(LINEAR_REG) $@ PRECIS=$@
 
 ## Build whole project in a Docker environment
 docker:
@@ -73,15 +89,11 @@ endif
 
 ## Clean .object folders
 clean:
-	+$(MAKE) -C $(PREDICT) clean
-	+$(MAKE) -C $(TRAIN) clean
-	+$(MAKE) -C $(PRECIS) clean
+	+$(MAKE) -C $(LINEAR_REG) clean TRAIN=$(TRAIN) PREDICT=$(PREDICT) PRECIS=$(PRECIS)
 
 ## Call 'clean' target and delete executable files
 fclean:
-	+$(MAKE) -C $(PREDICT) fclean
-	+$(MAKE) -C $(TRAIN) fclean
-	+$(MAKE) -C $(PRECIS) fclean
+	+$(MAKE) -C $(LINEAR_REG) fclean TRAIN=$(TRAIN) PREDICT=$(PREDICT) PRECIS=$(PRECIS)
 	rm -rf $(OUTPUT_IMG)
 
 ## Call 'fclean' target and wipe imported librairies

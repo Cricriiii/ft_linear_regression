@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   predict.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/22 16:59:08 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/25 22:17:36 by root             ###   ########.fr       */
+/*   Updated: 2026/09/26 09:35:26 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ double readMileage() {
 
 int main([[maybe_unused]] int argc, char** argv) {
     try {
-        std::vector<double> data{nc_tools::genFromTxt(argv[1])};
+        std::vector<double> data{nc_tools::genLatestFromTxt(argv[1])};
 
         while (running) {
             double mileage = readMileage();

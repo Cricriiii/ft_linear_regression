@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Dockerfile                                         :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
+#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/23 16:22:29 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/25 17:41:18 by root             ###   ########.fr        #
+#    Updated: 2026/09/26 10:37:46 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,8 +25,8 @@ RUN dnf install -y \
         valgrind \
         python3-devel \
         python3-numpy \
-        python3-matplotlib && \
-        python3-scikit-learn && \
+        python3-matplotlib \
+        python3-scikit-learn \
     && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
     && dnf clean all \
     && rm -rf /var/cache/dnf

@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/25 18:00:25 by root             ###   ########.fr        #
+#    Updated: 2026/09/26 10:02:44 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,34 +15,62 @@
 # ---------------------------------------------------------------------------- #
 
 CXX				:= g++
-CXX_STD			:= -std=c++23 -O3
-CXX_EFLAGS		:= -Werror -Wall -Wextra 
+CXX_STD			:= -std=c++23
+CXX_EFLAGS		:= -Werror -Wall -Wextra
 CXX_DEBUG		:= -g3
-
+CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG)
+ 
+# train est seul a avoir besoin de -O3 et de l'embedding Python/NumPy
+# (matplotlib-cpp pilote libpython pour tracer la courbe de cout).
+# -O3 + -g3 ensemble pour predict/precision serait contre-productif : variables
+# optimisees, debogueur qui ment sur les valeurs.
+TRAIN_STD		:= -std=c++23 -O3
 PYTHON_CFLAGS	:= $(shell python3-config --includes)
 PYTHON_LDFLAGS	:= $(shell python3-config --embed --ldflags)
 NUMPY_CFLAGS	:= -I $(shell python3 -c 'import numpy; print(numpy.get_include())')
+TRAIN_FLAGS		:= $(TRAIN_STD) $(CXX_EFLAGS) $(CXX_DEBUG) \
+				   $(PYTHON_CFLAGS) $(NUMPY_CFLAGS) \
+				   -Wno-deprecated-declarations
+ 
 
-CXX_FLAGS		:= $(CXX_STD) $(CXX_EFLAGS) $(CXX_DEBUG) \
-					$(PYTHON_CFLAGS) $(NUMPY_CFLAGS) \
-					-Wno-deprecated-declarations
 
 
 # ---------------------------------------------------------------------------- #
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-PROGRAM			:= $(notdir $(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
+# Names of the programs
+TRAIN			?= train
+PREDICT			?= predict
+PRECIS			?= precision
 
-NUMCPP_INC		:= ../NumCpp/include
-MATPLOT_INC		:= ../matplotlib-cpp
+# Used librairies
+NUMCPP			:= NumCpp
+MATPLOT			:= matplotlib-cpp
+NUMCPP_INC		:= ../$(NUMCPP)/include
+MATPLOT_INC		:= ../$(MATPLOT)
 
+# Image output directory of the training program
+OUTPUT_IMG		:= output
+
+# Program directories
 SRC_DIR			:= source
 OBJ_DIR			:= .object
 INC_DIR			:= include
 
-FILES_CPP		:= $(shell find . -type f -wholename "*.cpp")
-FILES_O			:= $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(FILES_CPP))
+# Source code of each program
+TRAIN_SRC		:= train.cpp \
+				   		$(SRC_DIR)/linear_regression.cpp \
+				   		$(SRC_DIR)/numcpp_tools.cpp
+PREDICT_SRC		:= predict.cpp \
+				   		$(SRC_DIR)/numcpp_tools.cpp
+PRECIS_SRC		:= precision.cpp \
+				   		$(SRC_DIR)/numcpp_tools.cpp
+
+# Object files of each
+TRAIN_OBJ		:= $(patsubst %.cpp,$(OBJ_DIR)/$(TRAIN)/%.o,$(TRAIN_SRC))
+PREDICT_OBJ		:= $(patsubst %.cpp,$(OBJ_DIR)/$(PREDICT)/%.o,$(PREDICT_SRC))
+PRECIS_OBJ		:= $(patsubst %.cpp,$(OBJ_DIR)/$(PRECIS)/%.o,$(PRECIS_SRC))
 
 
 # ---------------------------------------------------------------------------- #
@@ -50,20 +78,34 @@ FILES_O			:= $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(FILES_CPP))
 # ---------------------------------------------------------------------------- #
 
 ## Build the whole project
-all: $(PROGRAM)
+all: $(TRAIN) $(PREDICT) $(PRECIS)
+ 
+$(TRAIN): $(TRAIN_OBJ)
+	$(CXX) $(TRAIN_FLAGS) -I $(NUMCPP_INC) -I $(MATPLOT_INC) -I $(INC_DIR) $^ -o $@ $(PYTHON_LDFLAGS)
+ 
+$(PREDICT): $(PREDICT_OBJ)
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) $^ -o $@
+ 
+$(PRECIS): $(PRECIS_OBJ)
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) $^ -o $@
 
-$(PROGRAM): $(FILES_O) $(COMMON_O)
-	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(MATPLOT_INC) -I $(INC_DIR) $^ -o $(PROGRAM) $(PYTHON_LDFLAGS)
-
-$(OBJ_DIR)/%.o: %.cpp
+$(OBJ_DIR)/$(TRAIN)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(MATPLOT_INC) -I $(INC_DIR) -c $< -o $@
-
-
+	$(CXX) $(TRAIN_FLAGS) -I $(NUMCPP_INC) -I $(MATPLOT_INC) -I $(INC_DIR) -c $< -o $@
+ 
+$(OBJ_DIR)/$(PREDICT)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) -c $< -o $@
+ 
+$(OBJ_DIR)/$(PRECIS)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXX_FLAGS) -I $(NUMCPP_INC) -I $(INC_DIR) -c $< -o $@
+ 
 ## Call 'fclean' then 'all' targets
 re:
 	+$(MAKE) fclean
 	+$(MAKE) all
+
 
 
 # ---------------------------------------------------------------------------- #
@@ -77,7 +119,7 @@ clean:
 ## Call the 'clean' target and the delete executable file
 fclean:
 	+$(MAKE) clean
-	rm -f $(PROGRAM)
+	rm -f $(TRAIN) $(PREDICT) $(PRECIS)
 
 
 # ---------------------------------------------------------------------------- #
@@ -106,4 +148,4 @@ help:
 
 .PHONY: all re test test_docker clean fclean format help
 
-.SECONDARY: $(FILES_O)
+.SECONDARY: $(TRAIN_OBJ) $(PREDICT_OBJ) $(PRECIS_OBJ)
