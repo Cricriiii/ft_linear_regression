@@ -6,7 +6,7 @@
 #    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 16:59:04 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/26 13:05:53 by fox              ###   ########.fr        #
+#    Updated: 2026/09/26 15:21:18 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -110,6 +110,7 @@ re:
 ## Clean the .object folder
 clean:
 	rm -rf $(shell find . -type d -wholename *.object)
+	rm -rf $(OUTPUT_IMG)
 
 ## Call the 'clean' target and the delete executable file
 fclean:

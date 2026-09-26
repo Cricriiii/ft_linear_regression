@@ -6,7 +6,7 @@
 #    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/22 18:34:12 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/26 14:23:13 by fox              ###   ########.fr        #
+#    Updated: 2026/09/26 15:25:15 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ all:
 
 ## Build train program
 $(TRAIN):
-	+$(MAKE) -C $(LINEAR_REG) $@ TRAIN=$@
+	+$(MAKE) -C $(LINEAR_REG) $@ TRAIN=$@ OUTPUT_IMG=$(OUTPUT_IMG)
 
 ## Build predict program
 $(PREDICT):
@@ -103,6 +103,7 @@ reset:
 	+$(MAKE) fclean
 	rm -rf $(NUMCPP)
 	rm -rf $(MATPLOT)
+	rm -r data/*_result*csv
 
 
 # ---------------------------------------------------------------------------- #
